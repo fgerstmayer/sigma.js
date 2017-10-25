@@ -15,6 +15,7 @@
   sigma.canvas.edges.curvedArrow =
     function(edge, source, target, context, settings) {
     var color = edge.color,
+	style = edge.style,
         prefix = settings('prefix') || '',
         edgeColor = settings('edgeColor'),
         defaultNodeColor = settings('defaultNodeColor'),
@@ -31,8 +32,8 @@
         aX,
         aY,
         vX,
-        vY;
-
+        vY,
+	dash = [1,0];
     cp = (source.id === target.id) ?
       sigma.utils.getSelfLoopControlPoints(sX, sY, tSize) :
       sigma.utils.getQuadraticControlPoint(sX, sY, tX, tY);
@@ -64,7 +65,20 @@
           color = defaultEdgeColor;
           break;
       }
-
+    switch (style) {
+        case 'dotted':
+            dash = [2,2];
+            break;
+        case 'dashed':
+            dash = [8,3];
+            break;
+        default:
+            dash = [1,0];
+            break;
+    }
+    if (context.setLineDash) {
+        context.setLineDash(dash);
+    }
     context.strokeStyle = color;
     context.lineWidth = size;
     context.beginPath();

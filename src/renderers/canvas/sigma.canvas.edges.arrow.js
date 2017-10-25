@@ -14,6 +14,7 @@
    */
   sigma.canvas.edges.arrow = function(edge, source, target, context, settings) {
     var color = edge.color,
+	style = edge.style,
         prefix = settings('prefix') || '',
         edgeColor = settings('edgeColor'),
         defaultNodeColor = settings('defaultNodeColor'),
@@ -29,7 +30,9 @@
         aX = sX + (tX - sX) * (d - aSize - tSize) / d,
         aY = sY + (tY - sY) * (d - aSize - tSize) / d,
         vX = (tX - sX) * aSize / d,
-        vY = (tY - sY) * aSize / d;
+        vY = (tY - sY) * aSize / d,
+	dash = [1,0];
+
 
     if (!color)
       switch (edgeColor) {
@@ -43,7 +46,22 @@
           color = defaultEdgeColor;
           break;
       }
-
+    switch (style) {
+        case 'dotted':
+            dash = [2,2];
+            break;
+        case 'dashed':
+            dash = [8,3];
+            break;
+        default:
+            dash = [1,0];
+            break;
+    }
+    
+    
+    if (context.setLineDash) {
+        context.setLineDash(dash);
+    }
     context.strokeStyle = color;
     context.lineWidth = size;
     context.beginPath();
